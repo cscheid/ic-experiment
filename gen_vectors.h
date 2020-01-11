@@ -39,7 +39,7 @@ void generate_large_vectors(float alpha, int rep, Graph& graph, string outName)
 
   ofstream outMin (outName);
   for (int i = 0; i < n; i++) {
-    cout << "seed is " << to_string(i) << endl;
+    cout << "\r                          \rseed is " << to_string(i) << flush;
     vector<int> seeds;
     seeds.push_back(i); //Add ith node of graph, whose id should just be i
     simulation(seeds, alpha, rep, graph);

@@ -1,3 +1,5 @@
+// -*- c-basic-offset: 4 -*-
+
 // Simulate the spread of information over network
 // Also outputs the results
 
@@ -12,8 +14,6 @@
 
 using namespace std;
 
-void print_result(vector<int>&, int, int, Graph, int*);
-
 struct simRes {
     int node;
     float minPr;
@@ -27,7 +27,7 @@ struct simRes {
     float avePr;
 };
 
-simRes simulation(vector<int>& seeds, float alpha, int rep, Graph graph) {
+simRes simulation(vector<int>& seeds, float alpha, int rep, Graph &graph) {
     //srand(static_cast<unsigned int>(time(NULL)));
     random_device rand_dev;
     mt19937 generator(rand_dev());
@@ -45,7 +45,6 @@ simRes simulation(vector<int>& seeds, float alpha, int rep, Graph graph) {
     /*int* hitTime = new int [numV]{}; // Hit time of nodes for each round
      int rounds, lastNode;*/
 
-    AdjListNode* iter = nullptr;
     // Run simulation for each repetitio
     for(int simRound = 0; simRound < rep; simRound++) {
         memset(isOn, 0, numV);
@@ -60,21 +59,15 @@ simRes simulation(vector<int>& seeds, float alpha, int rep, Graph graph) {
 
         // Runs until no new node gets infected
         while(!onNodes.empty()) {
-            iter = graph.neighbors[onNodes.front()].head;// Neighbors of them
-            while(iter) {
-                if(isOn[iter->id]) { iter = iter->next; continue; }
+            for (auto id: graph.neighbors[onNodes.front()]) {
+                if (isOn[id])
+                    continue;
                 if((float) distr(generator) / INT_MAX <= alpha) {
-                    isOn[iter->id] = true;
-                    graph.prob[iter->id] += 1;
-                    onNodes.push(iter->id);
-                    /*hitTime[iter->id] += rounds;*/
+                    isOn[id] = true;
+                    graph.prob[id] += 1;
+                    onNodes.push(id);
                 }
-                iter = iter->next;
             }
-            /*if(onNodes.front() == lastNode) {
-             lastNode = onNodes.back();
-             rounds++;
-             }*/
             onNodes.pop();
         }
 
@@ -109,7 +102,6 @@ simRes simulation(vector<int>& seeds, float alpha, int rep, Graph graph) {
     simRes result = {minim, minP, minW, minG, minimW, minWP, minWW, minWG, rep, ave};
 
     delete[] isOn;
-    delete[] iter;
     swap(onNodes, empty);
     /*delete[] hitTime;*/
 

@@ -118,6 +118,7 @@ Graph readGraph(string file) {
 
     return netGraph;
 }
+
 //
 // void selectHeuristic(int algID, int init, float alpha, int rep, int k, int gap, Graph graph) {
 //     vector<float> results;
