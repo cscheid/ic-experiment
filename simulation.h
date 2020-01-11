@@ -52,27 +52,23 @@ simRes simulation(vector<int>& seeds, float alpha, int rep, Graph &graph) {
             isOn[seeds[i]] = true;
 
         onNodes = seeds;
-        // for (int i = 0; i < k; i++)
-        //     onNodes.push_back(seeds[i]);
 
-        /*rounds = 1;
-         lastNode = onNodes.back();*/
-
+        vector<int> next;
         // Runs until no new node gets infected
-        for (auto node: onNodes) {
-            vector<int> next;
-            // while (!onNodes.empty()) {
-            for (auto id: graph.neighbors[node]) { 
-                if (isOn[id])
-                    continue;
-                if (distr(generator) <= alpha) {
-                    isOn[id] = true;
-                    graph.prob[id] += 1;
-                    next.push_back(id);
+        while (!onNodes.empty()) {
+            for (auto node: onNodes) {
+                for (auto id: graph.neighbors[node]) { 
+                    if (isOn[id])
+                        continue;
+                    if (distr(generator) <= alpha) {
+                        isOn[id] = true;
+                        graph.prob[id] += 1;
+                        next.push_back(id);
+                    }
                 }
             }
-            // onNodes.pop();
-            swap(onNodes, next);
+            onNodes = next;
+            next.clear();
         }
     }
 
