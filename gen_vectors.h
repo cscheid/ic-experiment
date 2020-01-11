@@ -38,16 +38,22 @@ void generate_large_vectors(float alpha, int rep, Graph& graph, string outName)
   int n = graph.n;
 
   ofstream outMin (outName);
+  #pragma omp parallel for
   for (int i = 0; i < n; i++) {
     cout << "\r                          \rseed is " << i << " " << flush;
     vector<int> seeds;
     seeds.push_back(i); //Add ith node of graph, whose id should just be i
-    simulation(seeds, alpha, rep, graph);
-    //write probabilities to file
-    for (int j = 0; j < n; j++) {
-      outMin << (float)graph.prob[j]/(float)rep << ",";
+    Graph internal_graph(graph);
+    simulation(seeds, alpha, rep, internal_graph);
+    #pragma omp critical
+    {
+      //write probabilities to file
+      outMin << i << ": ";
+      for (int j = 0; j < n; j++) {
+        outMin << (float)internal_graph.prob[j]/(float)rep << ",";
+      }
+      outMin << endl;
     }
-    outMin << endl;
   }
   outMin.close();
 }
